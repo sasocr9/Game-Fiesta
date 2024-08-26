@@ -13,7 +13,7 @@ const GameDetail = () => {
   useEffect(() => {
     const fetchGame = async () => {
       try {
-        const response = await fetch("/api/games", {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/games`, {
           method: "POST",
           headers: {
             "Client-ID": import.meta.env.VITE_TWITCH_CLIENT_ID,
@@ -21,7 +21,7 @@ const GameDetail = () => {
             "Content-Type": "application/json",
           },
           body: `
-            fields *, cover.url, videos, genres, rating, game_modes.id,rating_count;
+            fields *, cover.url, videos, genres, rating, game_modes.id, rating_count;
             where id = ${id};
             sort rating desc;
             limit 40;
@@ -45,18 +45,11 @@ const GameDetail = () => {
     fetchGame();
   }, [id]);
 
-  const { cover, rating, slug } = game;
-
-  const genreIds = game.genres || [];
-
-  const image =
-    cover?.url.replace("/t_thumb/", "/t_720p/") ||
-    "https://via.placeholder.com/600";
-
   useEffect(() => {
     const fetchGenre = async () => {
       try {
-        const response = await fetch("/api/genres", {
+        const genreIds = game.genres?.map(genre => genre.id) || [];
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/genres`, {
           method: "POST",
           headers: {
             "Client-ID": import.meta.env.VITE_TWITCH_CLIENT_ID,
@@ -64,9 +57,9 @@ const GameDetail = () => {
             "Content-Type": "application/json",
           },
           body: `
-              fields name;
-              where id = (${genreIds.join(",")});
-            `,
+            fields name;
+            where id = (${genreIds.join(",")});
+          `,
         });
 
         if (!response.ok) {
@@ -81,10 +74,10 @@ const GameDetail = () => {
       }
     };
 
-    if (genreIds.length > 0) {
+    if (game.genres?.length > 0) {
       fetchGenre();
     }
-  }, [genreIds]);
+  }, [game.genres]);
 
   const renderStars = (rating) => {
     const maxStars = 5;
@@ -107,6 +100,7 @@ const GameDetail = () => {
       </div>
     );
   };
+
   const formatDate = (timestamp) => {
     const date = new Date(timestamp * 1000); // Convert from Unix timestamp
     return date.toLocaleDateString(undefined, {
@@ -115,6 +109,7 @@ const GameDetail = () => {
       day: "numeric",
     });
   };
+
   useTitle(`${game.name}/ GameFiesta`);
 
   return (
@@ -127,7 +122,7 @@ const GameDetail = () => {
         <section className="flex justify-around flex-wrap py-5">
           <div className="max-w-lg flex justify-center">
             <img
-              src={image}
+              src={game.cover?.url.replace("/t_thumb/", "/t_720p/") || "https://via.placeholder.com/600"}
               alt={game.name}
               className="rounded pt-6 max-w-[90%] object-contain"
             />
@@ -136,18 +131,17 @@ const GameDetail = () => {
             <h1 className="text-4xl font-bold my-5 text-center lg:text-left">
               {game.name}
             </h1>
-            {rating && (
+            {game.rating && (
               <div className="flex items-center my-4 justify-center sm:justify-start">
-                {renderStars(rating)}
-                <span className="ml-2 text-gray-600 dark:text-gray-400 ">
-                  ({Math.round(rating) / 20}) {game.rating_count} Reviews
+                {renderStars(game.rating)}
+                <span className="ml-2 text-gray-600 dark:text-gray-400">
+                  ({Math.round(game.rating) / 20}) {game.rating_count} Reviews
                 </span>
               </div>
             )}
             {game.first_release_date && (
               <p className="my-4">
-                <strong>Release Date:</strong>{" "}
-                {formatDate(game.first_release_date)}
+                <strong>Release Date:</strong> {formatDate(game.first_release_date)}
               </p>
             )}
             <p className="my-4">{game.summary}</p>
@@ -163,10 +157,10 @@ const GameDetail = () => {
                 ))}
               </p>
             )}
-            {slug && (
+            {game.slug && (
               <p className="my-4">
                 <a
-                  href={`https://www.igdb.com/games/${slug}`}
+                  href={`https://www.igdb.com/games/${game.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-500 hover:underline mt-20"

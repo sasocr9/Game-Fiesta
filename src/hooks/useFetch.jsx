@@ -8,7 +8,7 @@ function useFetch(api) {
     const fetchGames = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/games", {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/games`, {
           method: "POST",
           headers: {
             "Client-ID": import.meta.env.VITE_TWITCH_CLIENT_ID,
