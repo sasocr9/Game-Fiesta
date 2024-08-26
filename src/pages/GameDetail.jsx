@@ -13,7 +13,7 @@ const GameDetail = () => {
   useEffect(() => {
     const fetchGame = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/games`, {
+        const response = await fetch(`https://api.igdb.com/v4/games`, {
           method: "POST",
           headers: {
             "Client-ID": import.meta.env.VITE_TWITCH_CLIENT_ID,
@@ -49,7 +49,7 @@ const GameDetail = () => {
     const fetchGenre = async () => {
       try {
         const genreIds = game.genres?.map(genre => genre.id) || [];
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/genres`, {
+        const response = await fetch(`https://api.igdb.com/v4/genres`, {
           method: "POST",
           headers: {
             "Client-ID": import.meta.env.VITE_TWITCH_CLIENT_ID,
