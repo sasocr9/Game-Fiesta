@@ -18,7 +18,7 @@ const Search = () => {
           method: "POST",
           headers: {
             "Client-ID": import.meta.env.VITE_TWITCH_CLIENT_ID,
-            Authorization: `Bearer ${import.meta.env.VITE_TWITCH_TOKEN}`,
+            "Authorization": `Bearer ${import.meta.env.VITE_TWITCH_TOKEN}`,
             "Content-Type": "application/json",
           },
           body: `fields *, cover.url,videos;where name ~ "${queryTerm}"*;sort rating desc;limit 20;`,
