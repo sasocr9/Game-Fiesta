@@ -16,12 +16,10 @@ const GameDetail = () => {
         const response = await fetch("/api/games", {
           method: "POST",
           headers: {
-            "Client-ID": import.meta.env.VITE_TWITCH_CLIENT_ID,
-            Authorization: `Bearer ${import.meta.env.VITE_TWITCH_TOKEN}`,
             "Content-Type": "application/json",
           },
           body: `
-            fields *, cover.url, videos, genres, rating, game_modes.id,rating_count;
+            fields *, cover.url, videos, genres, rating, game_modes.id, rating_count;
             where id = ${id};
             sort rating desc;
             limit 40;
@@ -59,14 +57,12 @@ const GameDetail = () => {
         const response = await fetch("/api/genres", {
           method: "POST",
           headers: {
-            "Client-ID": import.meta.env.VITE_TWITCH_CLIENT_ID,
-            Authorization: `Bearer ${import.meta.env.VITE_TWITCH_TOKEN}`,
             "Content-Type": "application/json",
           },
           body: `
-              fields name;
-              where id = (${genreIds.join(",")});
-            `,
+            fields name;
+            where id = (${genreIds.join(",")});
+          `,
         });
 
         if (!response.ok) {
@@ -107,15 +103,17 @@ const GameDetail = () => {
       </div>
     );
   };
+
   const formatDate = (timestamp) => {
-    const date = new Date(timestamp * 1000); // Convert from Unix timestamp
+    const date = new Date(timestamp * 1000);
     return date.toLocaleDateString(undefined, {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
   };
-  useTitle(`${game.name}/ GameFiesta`);
+
+  useTitle(`${game.name} / GameFiesta`);
 
   return (
     <main>
@@ -139,7 +137,7 @@ const GameDetail = () => {
             {rating && (
               <div className="flex items-center my-4 justify-center sm:justify-start">
                 {renderStars(rating)}
-                <span className="ml-2 text-gray-600 dark:text-gray-400 ">
+                <span className="ml-2 text-gray-600 dark:text-gray-400">
                   ({Math.round(rating) / 20}) {game.rating_count} Reviews
                 </span>
               </div>

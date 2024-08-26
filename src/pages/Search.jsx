@@ -9,28 +9,44 @@ const Search = () => {
   const queryTerm = searchParams.get("q") || "";
   const [searchedGames, setSearchedGames] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchGames = async () => {
       setLoading(true);
+      setError(null);
+
       try {
-        const response = await fetch("api/games", {
+        const response = await fetch("/api/games", {
           method: "POST",
           headers: {
-            "Client-ID": import.meta.env.VITE_TWITCH_CLIENT_ID,
-            Authorization: `Bearer ${import.meta.env.VITE_TWITCH_TOKEN}`,
             "Content-Type": "application/json",
           },
-          body: `fields *, cover.url,videos;where name ~ "${queryTerm}"*;sort rating desc;limit 20;`,
+          body: `
+            fields *, cover.url, videos;
+            where name ~ "${queryTerm}"*;
+            sort rating desc;
+            limit 20;
+          `,
         });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const data = await response.json();
         setSearchedGames(data);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching games:", error);
+        setError("Failed to load search results. Please try again.");
+      } finally {
+        setLoading(false);
       }
     };
-    fetchGames();
+
+    if (queryTerm) {
+      fetchGames();
+    }
   }, [queryTerm]);
 
   useTitle(`Search result for ${queryTerm}`);
@@ -39,6 +55,8 @@ const Search = () => {
     <main>
       {loading ? (
         <LoadingSpinner />
+      ) : error ? (
+        <p className="text-red-500 text-center">{error}</p>
       ) : (
         <>
           <section>
