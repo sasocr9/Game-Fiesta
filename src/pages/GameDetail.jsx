@@ -16,8 +16,6 @@ const GameDetail = () => {
         const response = await fetch(`https://api.igdb.com/v4/games`, {
           method: "POST",
           headers: {
-            "Client-ID": import.meta.env.VITE_TWITCH_CLIENT_ID,
-            Authorization: `Bearer ${import.meta.env.VITE_TWITCH_TOKEN}`,
             "Content-Type": "application/json",
           },
           body: `
@@ -52,8 +50,11 @@ const GameDetail = () => {
         const response = await fetch(`https://api.igdb.com/v4/genres`, {
           method: "POST",
           headers: {
+<<<<<<< HEAD
             "Client-ID": import.meta.env.VITE_TWITCH_CLIENT_ID,
             "Authorization": `Bearer ${import.meta.env.VITE_TWITCH_TOKEN}`,
+=======
+>>>>>>> my-new-branch
             "Content-Type": "application/json",
           },
           body: `
@@ -102,7 +103,7 @@ const GameDetail = () => {
   };
 
   const formatDate = (timestamp) => {
-    const date = new Date(timestamp * 1000); // Convert from Unix timestamp
+    const date = new Date(timestamp * 1000);
     return date.toLocaleDateString(undefined, {
       year: "numeric",
       month: "long",
@@ -110,7 +111,11 @@ const GameDetail = () => {
     });
   };
 
+<<<<<<< HEAD
   useTitle(`${game.name}/ GameFiesta`);
+=======
+  useTitle(`${game.name} / GameFiesta`);
+>>>>>>> my-new-branch
 
   return (
     <main>
@@ -133,9 +138,15 @@ const GameDetail = () => {
             </h1>
             {game.rating && (
               <div className="flex items-center my-4 justify-center sm:justify-start">
+<<<<<<< HEAD
                 {renderStars(game.rating)}
                 <span className="ml-2 text-gray-600 dark:text-gray-400">
                   ({Math.round(game.rating) / 20}) {game.rating_count} Reviews
+=======
+                {renderStars(rating)}
+                <span className="ml-2 text-gray-600 dark:text-gray-400">
+                  ({Math.round(rating) / 20}) {game.rating_count} Reviews
+>>>>>>> my-new-branch
                 </span>
               </div>
             )}

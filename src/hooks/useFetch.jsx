@@ -5,7 +5,7 @@ function useFetch(api) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchGames = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
         const response = await fetch(`https://api.igdb.com/v4/games`, {
@@ -15,9 +15,11 @@ function useFetch(api) {
             "Authorization": `Bearer ${import.meta.env.VITE_TWITCH_TOKEN}`,
             "Content-Type": "application/json",
           },
-          body: `fields *, cover.url,videos; 
-                ${api}
-                limit 20;`,
+          body: `
+            fields *, cover.url, videos;
+            ${api}
+            limit 20;
+          `,
         });
 
         if (!response.ok) {
@@ -26,14 +28,15 @@ function useFetch(api) {
         }
 
         const json = await response.json();
-        setLoading(false);
         setData(json);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchGames();
+    fetchData();
   }, [api]);
 
   return { data, loading };
